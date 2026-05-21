@@ -122,10 +122,6 @@ int main(int argc, char **argv)
     couleur =
         (random() % 256 << 16) | (random() % 256 << 8) | (random() % 255);
 
-  /********************
-   * Mise en place du couplage mémoire entre les différents processus
-   * via mémoire partagée POSIX.
-   *********************/
     size_t taille_tampon = TAILLE_X * TAILLE_Y * 4;
 
     int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);

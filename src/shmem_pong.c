@@ -10,8 +10,12 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 #include <SDL2/SDL.h>
 #include <assert.h>
+
+#define SHM_NAME "/ensipong_shmem"
 
 const int TAILLE_X = 800;
 const int TAILLE_Y = 600;
@@ -119,12 +123,21 @@ int main(int argc, char **argv)
         (random() % 256 << 16) | (random() % 256 << 8) | (random() % 255);
 
   /********************
-   * Le tampon a changer pour mettre en place le couplage mémoire
-   * entre les différents processus.
+   * Mise en place du couplage mémoire entre les différents processus
+   * via mémoire partagée POSIX.
    *********************/
-    void *tampon = calloc(TAILLE_X * TAILLE_Y, 4);
-    if (tampon == NULL)
-        handle_error("malloc");
+    size_t taille_tampon = TAILLE_X * TAILLE_Y * 4;
+
+    int fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (fd == -1)
+        handle_error("shm_open");
+
+    if (ftruncate(fd, taille_tampon) == -1)
+        handle_error("ftruncate");
+
+    void *tampon = mmap(NULL, taille_tampon, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (tampon == MAP_FAILED)
+        handle_error("mmap");
 
     /* On associe ce tampon à la zone de dessin. */
     canvas =
@@ -168,7 +181,9 @@ int main(int argc, char **argv)
   fin:
     /* On libère la mémoire avant de s'arrêter. */
     SDL_FreeSurface(canvas);
-    free(tampon);
+    munmap(tampon, taille_tampon);
+    close(fd);
+    shm_unlink(SHM_NAME);
     SDL_Quit();
 
     return 0;

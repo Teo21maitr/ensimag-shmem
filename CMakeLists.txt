@@ -11,7 +11,8 @@ enable_testing()
 # Detect SDL using standard CMake FindSDL
 #####
 find_package(SDL2 REQUIRED)
-set(SDL_INCLUDE_CFLAGS -I${SDL2_INCLUDE_DIR})
+# SDL2_INCLUDE_DIRS contient le répertoire parent (include/) nécessaire pour <SDL2/SDL.h>
+string(REPLACE ";" " -I" SDL_INCLUDE_CFLAGS "-I${SDL2_INCLUDE_DIRS}")
 
 
 # Debug build
@@ -22,7 +23,7 @@ set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${SDL_INCLUDE_CFLAGS} -Wall  -We
 #########
 # Vous devez editer les lignes suivantes pour y mettre vos logins
 #########
-set(VARIANTE_LOGINS login1 login2 login3)
+set(VARIANTE_LOGINS fieuteln maitrott)
 
 #########
 
@@ -38,7 +39,11 @@ endif()
 # shell il faut les ajouter ici
 ##
 add_executable(ensipong src/shmem_pong.c)
-target_link_libraries(ensipong ${SDL2_LIBRARIES} -lrt)
+if(UNIX AND NOT APPLE)
+  target_link_libraries(ensipong ${SDL2_LIBRARIES} -lrt)
+else()
+  target_link_libraries(ensipong ${SDL2_LIBRARIES})
+endif()
 
 ##
 # Programme de test

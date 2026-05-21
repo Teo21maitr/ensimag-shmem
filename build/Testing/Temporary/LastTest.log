@@ -1,0 +1,21 @@
+Start testing: May 04 10:50 CEST
+----------------------------------------------------------
+1/1 Testing: pong
+1/1 Test: pong
+Command: "/Users/teomaitrot/Documents/Ensimag/6/système/tpchat/ensimag-shmem/tests/fourpong.pl"
+Directory: /Users/teomaitrot/Documents/Ensimag/6/système/tpchat/ensimag-shmem/build
+"pong" start time: May 04 10:50 CEST
+Output:
+----------------------------------------------------------
+ftruncate: Invalid argument
+ftruncate: Invalid argument
+ftruncate: Invalid argument
+<end of output>
+Test time =  34.82 sec
+----------------------------------------------------------
+Test Passed.
+"pong" end time: May 04 10:51 CEST
+"pong" time elapsed: 00:00:34
+----------------------------------------------------------
+
+End testing: May 04 10:51 CEST
